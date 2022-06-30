@@ -1,4 +1,10 @@
 <resources>
-    <string name="app_name">CurrencyConverter</string>
+    <string name="app_name">Currency Converter</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="logo_content_description">App logo</string>
+    <string name="app_bar_title_description">App bar title</string>
+    <string name="currency_dropdown_description">Currency Drop down</string>
+    <string name="flip_currency_description">Flip currency button</string>
+    <string name="app_bar_title">CONVERT</string>
 </resources>
