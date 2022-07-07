@@ -1,13 +1,15 @@
-package com.mm.currencyconverter.features.converter.presentation.screens.dashboard.composables
+package com.mm.currencyconverter.features.converter.presentation.ui.screens.dashboard.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,24 +18,28 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import com.mm.currencyconverter.features.converter.presentation.ui.theme.grey
-import com.mm.currencyconverter.features.converter.presentation.ui.theme.poppins
+import com.mm.currencyconverter.R
+import com.mm.currencyconverter.features.converter.presentation.utils.Converter.round
 
-@Preview
 @Composable
 fun CurrencyComponent(
-    shape: RoundedCornerShape = RoundedCornerShape(bottomEnd = 36.dp, bottomStart = 36.dp)
+    shape: RoundedCornerShape = RoundedCornerShape(bottomEnd = 36.dp, bottomStart = 36.dp),
+    currencies: List<String>,
+    selectedLabel: String,
+    onItemSelect: (label: String) -> Unit,
+    currencyInputValue: Double,
+    onInputValueChange: (value: Double) -> Unit,
+    contentDescription: String,
+    amountInputContentDescriptionn: String
 ) {
 
     var expanded by remember { mutableStateOf(false) }
-    val currencies = listOf("USD", "INR", "EUR")
-    var selectedItem by remember { mutableStateOf("USD") }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
     val icon = if (expanded) {
@@ -47,7 +53,7 @@ fun CurrencyComponent(
             .fillMaxWidth()
             .height(200.dp)
             .clip(shape)
-            .background(grey)
+            .background(MaterialTheme.colorScheme.primary)
             .padding(vertical = 16.dp, horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -60,34 +66,31 @@ fun CurrencyComponent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(
-                value = selectedItem,
+                value = selectedLabel,
                 onValueChange = { },
                 modifier = Modifier
                     .wrapContentWidth()
-                    .background(grey)
+                    .background(MaterialTheme.colorScheme.primary)
                     .wrapContentHeight()
                     .onGloballyPositioned { coordinates ->
                         textFieldSize = coordinates.size.toSize()
+                    }
+                    .semantics {
+                        this.contentDescription = contentDescription
                     },
                 enabled = false,
-                textStyle = TextStyle(
-                    fontSize = 24.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = poppins
-                ),
+                textStyle = MaterialTheme.typography.displayMedium,
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = grey,
+                    backgroundColor = MaterialTheme.colorScheme.primary,
 
                     ),
                 trailingIcon = {
                     Icon(
-                        icon, "contentDescription",
+                        icon, stringResource(id = R.string.currency_dropdown_description),
                         Modifier
                             .size(24.dp)
                             .clickable { expanded = !expanded },
                         tint = Color.LightGray
-
                     )
                 }
             )
@@ -100,28 +103,36 @@ fun CurrencyComponent(
             ) {
                 currencies.forEachIndexed { _, item ->
                     DropdownMenuItem(onClick = {
-                        selectedItem = item
                         expanded = false
+                        onItemSelect(item)
                     }) {
                         Text(
-                            text = item, style = TextStyle(
-                                fontSize = 12.sp,
-                                color = Color.Black,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight.Normal
-                            )
+                            text = item, style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
             }
         }
-        Text(
-            text = "0", style = TextStyle(
-                fontSize = 48.sp,
-                color = Color.DarkGray,
-                fontFamily = poppins,
-                fontWeight = FontWeight.SemiBold
-            )
+        TextField(
+            value = if (currencyInputValue == 0.0) {
+                ""
+            } else {
+                "${currencyInputValue.round(2)}"
+            },
+            onValueChange = {
+                try {
+                    onInputValueChange(it.toDouble())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            },
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.primary)
+                .semantics {
+                    this.contentDescription = ""
+                },
+            textStyle = MaterialTheme.typography.bodyLarge,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal)
         )
 
     }

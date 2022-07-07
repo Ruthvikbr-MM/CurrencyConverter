@@ -5,6 +5,11 @@
     <string name="logo_content_description">App logo</string>
     <string name="app_bar_title_description">App bar title</string>
     <string name="currency_dropdown_description">Currency Drop down</string>
-    <string name="flip_currency_description">Flip currency button</string>
+    <string name="flip_currency_button_description">Flip currency button</string>
+    <string name="primary_currency_text_field_content_description">Primary Currency selector</string>
+    <string name="secondary_currency_text_field_content_description">Secondary Currency selector</string>
+    <string name="primary_currency_input_text_field_content_description">Primary Currency input</string>
+    <string name="secondary_currency_input_text_field_content_description">Secondary Currency input</string>
+
     <string name="app_bar_title">CONVERT</string>
 </resources>
